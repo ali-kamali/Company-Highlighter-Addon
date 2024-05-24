@@ -11167,3 +11167,15 @@ const companies = [
     browser.storage.local.set({ companies });
   }, 24 * 60 * 60 * 1000);
   
+ 
+browser.menus.create({
+    id: "copy-job-info",
+    title: "Copy Job Info",
+    contexts: ["all"],
+    documentUrlPatterns: ["https://www.linkedin.com/jobs/*"]
+});
+browser.menus.onClicked.addListener((info, tab) => {
+    if (info.menuItemId === "copy-job-info") {
+        browser.tabs.sendMessage(tab.id, {text: 'report_back'});//, doStuffWithDom);
+    }
+});

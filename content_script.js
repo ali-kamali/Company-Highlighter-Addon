@@ -69,7 +69,7 @@ function checkRelocationPackage() {
                             title.removeChild(old)
                         title.appendChild(relocationElement);
                     }
-
+                    reset();
                 }
 
             }
@@ -88,6 +88,7 @@ function checkRelocationPackage() {
                             title.removeChild(old)
                         title.appendChild(relocationElement);
                     }
+                    reset();
                 }
             }
 
@@ -99,6 +100,12 @@ function checkRelocationPackage() {
         console.error(e.message);
     }
 
+}
+function reset() {
+    var items = document.querySelector('.jobs-search__job-details').querySelectorAll('.companyNameElementclass');
+    items.forEach(element => {
+        element.parentNode.removeChild(element);
+    });
 }
 function observeJobElements(companies) {
     try {
@@ -170,8 +177,49 @@ function load() {
     });
 }
 
-
+load();
 // Ensure the script runs only after the page content is fully loaded
 window.onload = function () {
     load();
 };
+
+function copyJobInfo() {
+    
+    var jobCompanyName = '';
+    var jobCompanyFullName = '';
+    var jobTitle = '';
+    var jobLink = '';
+    var relocation = '';
+    var tertiary1 = '';
+    var tertiary2 = '';
+    var tertiary3 = '';
+    var tertiary4 = '';
+    var tertiary5 = '';
+    try {
+        jobCompanyName = document.querySelector('.job-details-jobs-unified-top-card__company-name').querySelector('a').innerText;
+        jobTitle = document.querySelector('.job-details-jobs-unified-top-card__job-title').querySelector('h1 a').innerText;
+
+        tertiary1 = document.querySelector('.job-details-jobs-unified-top-card__tertiary-description').children[0].innerText;
+        tertiary2 = document.querySelector('.job-details-jobs-unified-top-card__tertiary-description').children[1].innerText;
+        tertiary3 = document.querySelector('.job-details-jobs-unified-top-card__tertiary-description').children[2].innerText;
+        tertiary4 = document.querySelector('.job-details-jobs-unified-top-card__tertiary-description').children[3].innerText;
+        tertiary5 = document.querySelector('.job-details-jobs-unified-top-card__tertiary-description').children[4].innerText;
+
+        jobLink = document.querySelector('.job-details-jobs-unified-top-card__job-title').querySelector('h1 a').href;
+        relocation = document.querySelector('.relocclass').innerText;
+        jobCompanyFullName = document.querySelector('.job-details-jobs-unified-top-card__company-name').querySelector('.companyNameElementclass').innerText;
+    } catch (e) {
+        if (!(e instanceof Error)) {
+            e = new Error(e);
+        }
+        console.error(e.message);
+    }
+    navigator.clipboard.writeText(jobCompanyName + '\t' + jobCompanyFullName + '\t' + jobTitle + '\t' + relocation + '\t' + tertiary1 + '\t' + tertiary2 + '\t' + tertiary3 + '\t' + tertiary4 + '\t' + tertiary5 + '\t' + jobLink);
+    reset();
+}
+
+browser.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
+    if (msg.text === 'report_back') {
+        copyJobInfo();
+    }
+});
